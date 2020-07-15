@@ -1,12 +1,14 @@
-import Configuration.DatabaseConfig
-import Domain.Transaction
+package persistence
+
 import cats.effect._
+import common.Configuration.DatabaseConfig
+import common.Domain.Transaction
 import doobie._
 import doobie.implicits._
 import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor.Aux
 
-class Database(xa: Aux[IO, Unit]) {
+class PersistenceAPI(xa: Aux[IO, Unit]) {
 
   def insert(transaction: Transaction): IO[Int] =
     (fr"INSERT INTO simple_ledger.tb_data(sender, receiver, currency, date_ts)" ++
@@ -14,17 +16,17 @@ class Database(xa: Aux[IO, Unit]) {
       fr"  ${transaction.sender.asString}" ++
       fr", ${transaction.receiver.asString}" ++
       fr", ${transaction.currency.symbol}" ++
-      fr", current_timestamp" ++
+      fr", CURRENT_TIMESTAMP" ++
       fr")").update.run.transact(xa)
 
 }
 
-object Database {
+object PersistenceAPI {
 
-  def apply(databaseConfig: DatabaseConfig): Database = {
+  def apply(databaseConfig: DatabaseConfig): PersistenceAPI = {
     implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContexts.synchronous)
 
-    new Database(
+    new PersistenceAPI(
       Transactor.fromDriverManager[IO](
         databaseConfig.driver,
         databaseConfig.connectionString,

@@ -1,15 +1,15 @@
-import Domain.Currency
-import Generator.randomCurrency
+import Generator._
+import common.Domain.Currency
 import org.scalatest.funsuite.AnyFunSuite
 
 class GeneratorTest extends AnyFunSuite {
 
   test("randomPerson") {
-    val p = Generator.randomPerson.asString.split(" ")
+    val p = randomPerson.asString.split(" ")
 
     assert(p.size == 2)
-    assert(Generator.names.contains(p.head))
-    assert(Generator.surnames.contains(p(1)))
+    assert(names.contains(p.head))
+    assert(surnames.contains(p(1)))
   }
 
   test("randomCurrency") {

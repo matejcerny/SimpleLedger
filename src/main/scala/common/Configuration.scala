@@ -1,3 +1,5 @@
+package common
+
 import java.io.{BufferedReader, FileNotFoundException, InputStreamReader}
 
 import com.typesafe.config.{Config, ConfigFactory}
@@ -49,11 +51,11 @@ object Configuration {
   }
 
   /**
-   * Loads configuration file and parses it to [[AppConfig]]
-   *
-   * @param path config file in jar
-   * @return parsed AppConfig
-   */
+    * Loads configuration file and parses it to [[AppConfig]]
+    *
+    * @param path config file in jar
+    * @return parsed AppConfig
+    */
   def buildAppConfig(path: String): AppConfig = buildAppConfig(buildConfig(path))
 
 }

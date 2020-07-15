@@ -1,10 +1,12 @@
+package common
+
 object Domain {
 
   case class FullName(value: String) {
     require(value.length > 3 && value.contains(" "))
   }
 
-  case class Person(fullName: FullName) { val asString: String = fullName.value}
+  case class Person(fullName: FullName) { val asString: String = fullName.value }
 
   case class Symbol(value: String) {
     require(value.length >= 3 && value.length <= 4 && value == value.toUpperCase)
@@ -26,4 +28,6 @@ object Domain {
     receiver: Person,
     currency: Currency
   )
+
+  final case class TransactionMessage(transaction: Transaction)
 }

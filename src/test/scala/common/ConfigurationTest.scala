@@ -1,6 +1,8 @@
+package common
+
 import java.io.FileNotFoundException
 
-import Configuration.{AppConfig, DatabaseConfig, buildAppConfig, buildConfig}
+import common.Configuration.{AppConfig, DatabaseConfig, buildAppConfig, buildConfig}
 import org.scalatest.funsuite.AnyFunSuite
 
 class ConfigurationTest extends AnyFunSuite {

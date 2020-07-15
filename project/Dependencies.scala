@@ -3,6 +3,7 @@ import sbt._
 object Dependencies {
 
   object Versions {
+    val Akka = "2.6.7"
     val Cats = "2.1.1"
     val Config = "1.0.1"
     val Doobie = "0.9.0"
@@ -11,6 +12,8 @@ object Dependencies {
     val ScalaTest = "3.1.2"
     val SLF4J = "1.7.9"
   }
+
+  val Akka = Seq("com.typesafe.akka" %% "akka-cluster-typed" % Versions.Akka)
 
   val Cats = Seq(
     "org.typelevel" %% "cats-core" % Versions.Cats,

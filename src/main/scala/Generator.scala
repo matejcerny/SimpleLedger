@@ -1,4 +1,4 @@
-import Domain.{Currency, FullName, Person}
+import common.Domain.{Currency, FullName, Person}
 
 import scala.util.Random.nextInt
 

@@ -1,4 +1,6 @@
-import Domain.{Currency, FullName, Symbol}
+package common
+
+import common.Domain.{Currency, FullName, Symbol}
 import org.scalatest.funsuite.AnyFunSuite
 
 class DomainTest extends AnyFunSuite {

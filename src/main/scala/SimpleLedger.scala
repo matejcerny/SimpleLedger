@@ -1,10 +1,11 @@
-import Configuration.buildAppConfig
-import Domain.Currency.Cardano
-import Domain.Transaction
 import Generator.randomPerson
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
+import common.Configuration.buildAppConfig
+import common.Domain.Currency.Cardano
+import common.Domain.Transaction
+import persistence.PersistenceAPI
 
 object SimpleLedger extends IOApp with LazyLogging {
 
@@ -21,14 +22,15 @@ object SimpleLedger extends IOApp with LazyLogging {
     IO {
 
       val appConfig = buildAppConfig(path)
-      val db = Database(appConfig.databaseConfig)
+      val persistenceAPI = PersistenceAPI(appConfig.databaseConfig)
+
       val transaction = Transaction(
         randomPerson,
         randomPerson,
         Cardano
       )
 
-      (for { i <- db.insert(transaction) } yield { logger.info(i.toString) })
+      (for { i <- persistenceAPI.insert(transaction) } yield { logger.info(i.toString) })
         .unsafeRunSync()
 
     }.as(ExitCode.Success)
