@@ -1,7 +1,7 @@
 package persistence
 
 import akka.actor.typed.Behavior
-import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext}
+import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
 import common.Domain.TransactionMessage
 
 class PersistenceActor(context: ActorContext[TransactionMessage], persistenceAPI: PersistenceAPI)
@@ -9,9 +9,9 @@ class PersistenceActor(context: ActorContext[TransactionMessage], persistenceAPI
 
   def onMessage(msg: TransactionMessage): Behavior[TransactionMessage] = {
     context.log.info(msg.transaction.sender.asString)
-    persistenceAPI.insert(msg.transaction)
+    persistenceAPI.insert(msg.transaction).unsafeRunSync()
 
-    this
+    Behaviors.stopped
   }
 
 }

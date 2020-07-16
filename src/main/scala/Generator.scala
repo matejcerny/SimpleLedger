@@ -1,4 +1,4 @@
-import common.Domain.{Amount, Currency, FullName, Person}
+import common.Domain.{Amount, Currency, FullName, Person, Transaction, TransactionMessage}
 
 import scala.math.BigDecimal.RoundingMode
 import scala.util.Random.{nextDouble, nextInt}
@@ -25,4 +25,14 @@ object Generator {
     Amount(
       (BigDecimal(nextInt(100000)) + BigDecimal(nextDouble()).setScale(8, RoundingMode.HALF_UP)).abs
     )
+
+  def randomTransactionMessage: TransactionMessage =
+    TransactionMessage(
+      Transaction(
+        randomPerson,
+        randomPerson,
+        randomAmount,
+        randomCurrency
+      )
+  )
 }

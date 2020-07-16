@@ -1,10 +1,12 @@
 import Generator._
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import common.Configuration.buildAppConfig
-import common.Domain.Transaction
-import persistence.PersistenceAPI
+import common.Domain.TransactionMessage
+import persistence.{PersistenceAPI, PersistenceActor}
 
 object SimpleLedger extends IOApp with LazyLogging {
 
@@ -19,19 +21,15 @@ object SimpleLedger extends IOApp with LazyLogging {
 
   def runSuccess(path: String): IO[ExitCode] =
     IO {
+      logger.info("Starting the application")
 
       val appConfig = buildAppConfig(path)
-      val persistenceAPI = PersistenceAPI(appConfig.databaseConfig)
 
-      val transaction = Transaction(
-        randomPerson,
-        randomPerson,
-        randomAmount,
-        randomCurrency
-      )
+      val transactionBehavior = Behaviors.setup[TransactionMessage] { c =>
+        PersistenceActor(c, PersistenceAPI(appConfig.databaseConfig))
+      }
 
-      (for { i <- persistenceAPI.insert(transaction) } yield { logger.info(i.toString) })
-        .unsafeRunSync()
+      ActorSystem(transactionBehavior, "test") ! randomTransactionMessage
 
     }.as(ExitCode.Success)
 
