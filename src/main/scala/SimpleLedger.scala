@@ -1,9 +1,8 @@
-import Generator.randomPerson
+import Generator._
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import common.Configuration.buildAppConfig
-import common.Domain.Currency.Cardano
 import common.Domain.Transaction
 import persistence.PersistenceAPI
 
@@ -27,7 +26,8 @@ object SimpleLedger extends IOApp with LazyLogging {
       val transaction = Transaction(
         randomPerson,
         randomPerson,
-        Cardano
+        randomAmount,
+        randomCurrency
       )
 
       (for { i <- persistenceAPI.insert(transaction) } yield { logger.info(i.toString) })

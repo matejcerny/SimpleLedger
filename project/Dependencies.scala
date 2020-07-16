@@ -8,6 +8,7 @@ object Dependencies {
     val Config = "1.0.1"
     val Doobie = "0.9.0"
     val Logback = "1.2.3"
+    val ScalaCheck = "1.14.1"
     val ScalaLogging = "3.9.2"
     val ScalaTest = "3.1.2"
     val SLF4J = "1.7.9"
@@ -35,6 +36,9 @@ object Dependencies {
     "org.slf4j" % "slf4j-api" % Versions.SLF4J
   )
 
-  val ScalaTest = Seq("org.scalatest" %% "scalatest" % Versions.ScalaTest % Test)
+  val ScalaTest = Seq(
+    "org.scalatest" %% "scalatest" % Versions.ScalaTest % Test,
+    "org.scalacheck" %% "scalacheck" % Versions.ScalaCheck % Test
+  )
 
 }

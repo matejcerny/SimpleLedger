@@ -27,5 +27,5 @@ sbt assembly
 
 Run application with parameter
 ```
-java -jar ./target/scala-2.13/SimpleLedger.jar application.conf
+java -jar ./target/scala-2.13/SimpleLedger.jar /application.conf
 ```

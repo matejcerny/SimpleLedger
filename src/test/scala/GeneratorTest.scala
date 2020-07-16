@@ -1,5 +1,7 @@
 import Generator._
-import common.Domain.Currency
+import common.Domain.{Amount, Currency}
+import org.scalacheck.Prop._
+import org.scalacheck.Properties
 import org.scalatest.funsuite.AnyFunSuite
 
 class GeneratorTest extends AnyFunSuite {
@@ -14,6 +16,14 @@ class GeneratorTest extends AnyFunSuite {
 
   test("randomCurrency") {
     assert(Currency.toList.contains(randomCurrency))
+  }
+
+}
+
+object GeneratorTest extends Properties("GeneratorTest") {
+
+  property("randomAmount") = forAll { _: Int =>
+    randomAmount.value >= Amount.min.value && randomAmount.value <= Amount.max.value
   }
 
 }

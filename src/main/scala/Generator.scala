@@ -1,6 +1,7 @@
-import common.Domain.{Currency, FullName, Person}
+import common.Domain.{Amount, Currency, FullName, Person}
 
-import scala.util.Random.nextInt
+import scala.math.BigDecimal.RoundingMode
+import scala.util.Random.{nextDouble, nextInt}
 
 object Generator {
 
@@ -19,4 +20,9 @@ object Generator {
   )
 
   def randomCurrency: Currency = Currency.toList(nextInt(Currency.size))
+
+  def randomAmount: Amount =
+    Amount(
+      (BigDecimal(nextInt(100000)) + BigDecimal(nextDouble()).setScale(8, RoundingMode.HALF_UP)).abs
+    )
 }
