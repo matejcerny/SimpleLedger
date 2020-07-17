@@ -1,4 +1,8 @@
-import common.Domain.{Amount, Currency, FullName, Person, Transaction, TransactionMessage}
+package common
+
+import common.Domain._
+import persistence.Domain.{Persistence, PersistenceMessage}
+import trasaction.Domain.{Transaction, TransactionMessage}
 
 import scala.math.BigDecimal.RoundingMode
 import scala.util.Random.{nextDouble, nextInt}
@@ -13,7 +17,10 @@ object Generator {
     "Hrnčíř", "Kadlec", "Krejčí", "Mlynář", "Sedlák", "Ševčík", "Tesař", "Zedníček",
   )
 
+  def randomId: Id = Id(1)
+
   def randomPerson: Person = Person(
+    randomId,
     FullName(
       names(nextInt(names.length)) + " " + surnames(nextInt(surnames.length))
     )
@@ -26,13 +33,36 @@ object Generator {
       (BigDecimal(nextInt(100000)) + BigDecimal(nextDouble()).setScale(8, RoundingMode.HALF_UP)).abs
     )
 
-  def randomTransactionMessage: TransactionMessage =
-    TransactionMessage(
-      Transaction(
+  def randomTransactionMessage: TransactionMessage = TransactionMessage(
+    Transaction(
+      randomId,
+      randomId,
+      randomAmount,
+      randomCurrency
+    )
+  )
+
+  def randomPersistenceMessage: PersistenceMessage =
+    PersistenceMessage(
+      Persistence(
         randomPerson,
         randomPerson,
         randomAmount,
-        randomCurrency
+        randomCurrency,
+        BusinessTime.now
       )
   )
+
+  def randomPersistenceMessage(transactionMessage: TransactionMessage): PersistenceMessage =
+    PersistenceMessage(
+      Persistence(
+        randomPerson,
+        randomPerson,
+        transactionMessage.transaction.amount,
+        transactionMessage.transaction.currency,
+        transactionMessage.transaction.businessTime
+      )
+    )
+
+
 }

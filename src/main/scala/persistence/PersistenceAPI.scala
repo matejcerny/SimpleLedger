@@ -2,23 +2,23 @@ package persistence
 
 import cats.effect._
 import common.Configuration.DatabaseConfig
-import common.Domain.Transaction
 import doobie._
 import doobie.implicits._
-import doobie.implicits.javatime.JavaTimeLocalDateTimeMeta //used for businessTime conversion
+import doobie.implicits.javatime.JavaTimeLocalDateTimeMeta
 import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor.Aux
+import persistence.Domain.Persistence
 
 class PersistenceAPI(xa: Aux[IO, Unit]) {
 
-  def insert(transaction: Transaction): IO[Int] =
+  def insert(persistence: Persistence): IO[Int] =
     (fr"INSERT INTO simple_ledger.tb_data(sender, receiver, amount, currency, business_time)" ++
       fr"  VALUES(" ++
-      fr"  ${transaction.sender.asString}" ++
-      fr", ${transaction.receiver.asString}" ++
-      fr", ${transaction.amount}" ++
-      fr", ${transaction.currency.symbol}" ++
-      fr", ${transaction.businessTime.value}" ++
+      fr"  ${persistence.sender.asString}" ++
+      fr", ${persistence.receiver.asString}" ++
+      fr", ${persistence.amount}" ++
+      fr", ${persistence.currency.symbol}" ++
+      fr", ${persistence.businessTime.value}" ++
       fr")").update.run.transact(xa)
 
 }

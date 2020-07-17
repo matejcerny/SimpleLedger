@@ -2,14 +2,14 @@ package persistence
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
-import common.Domain.TransactionMessage
+import persistence.Domain.PersistenceMessage
 
-class PersistenceActor(context: ActorContext[TransactionMessage], persistenceAPI: PersistenceAPI)
-    extends AbstractBehavior[TransactionMessage](context) {
+class PersistenceActor(context: ActorContext[PersistenceMessage], persistenceAPI: PersistenceAPI)
+    extends AbstractBehavior[PersistenceMessage](context) {
 
-  def onMessage(msg: TransactionMessage): Behavior[TransactionMessage] = {
-    context.log.info(msg.transaction.sender.asString)
-    persistenceAPI.insert(msg.transaction).unsafeRunSync()
+  def onMessage(msg: PersistenceMessage): Behavior[PersistenceMessage] = {
+    context.log.info(msg.persistence.sender.asString)
+    persistenceAPI.insert(msg.persistence).unsafeRunSync()
 
     Behaviors.stopped
   }
@@ -18,8 +18,13 @@ class PersistenceActor(context: ActorContext[TransactionMessage], persistenceAPI
 
 object PersistenceActor {
 
+  def setup(persistenceAPI: PersistenceAPI): Behavior[PersistenceMessage] =
+    Behaviors.setup[PersistenceMessage] { c =>
+      PersistenceActor(c, persistenceAPI)
+    }
+
   def apply(
-    context: ActorContext[TransactionMessage],
+    context: ActorContext[PersistenceMessage],
     persistenceAPI: PersistenceAPI
   ): PersistenceActor = new PersistenceActor(context, persistenceAPI)
 

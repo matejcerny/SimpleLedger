@@ -1,6 +1,6 @@
 package common
 
-import common.Domain.{Amount, Currency, FullName, Person, Symbol}
+import common.Domain.{Amount, Currency, FullName, Id, Person, Symbol}
 import org.scalatest.funsuite.AnyFunSuite
 
 class DomainTest extends AnyFunSuite {
@@ -13,7 +13,7 @@ class DomainTest extends AnyFunSuite {
   test("Person") {
     val fullName = "Franta Vomacka"
 
-    assert(Person(FullName(fullName)).asString == fullName)
+    assert(Person(Id(1), FullName(fullName)).asString == fullName)
   }
 
   test("Symbol") {

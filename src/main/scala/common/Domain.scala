@@ -4,15 +4,13 @@ import java.time.LocalDateTime
 
 object Domain {
 
-  case class FullName(value: String) {
-    require(value.length > 3 && value.contains(" "))
-  }
+  case class Id(value: Long) { require(value > 0) }
 
-  case class Person(fullName: FullName) { val asString: String = fullName.value }
+  case class FullName(value: String) { require(value.length > 3 && value.contains(" ")) }
 
-  case class Amount(value: BigDecimal) {
-    require(value.precision <= 38 && value.scale <= 8)
-  }
+  case class Person(id: Id, fullName: FullName) { val asString: String = fullName.value }
+
+  case class Amount(value: BigDecimal) { require(value.precision <= 38 && value.scale <= 8) }
   object Amount {
     def min: Amount = Amount(BigDecimal("0.00000001"))
     def max: Amount = Amount(BigDecimal("999999999999999999999999999999"))
@@ -36,13 +34,4 @@ object Domain {
   case class BusinessTime(value: LocalDateTime)
   object BusinessTime { def now: BusinessTime = BusinessTime(LocalDateTime.now) }
 
-  case class Transaction(
-    sender: Person,
-    receiver: Person,
-    amount: Amount,
-    currency: Currency,
-    businessTime: BusinessTime = BusinessTime.now
-  )
-
-  final case class TransactionMessage(transaction: Transaction)
 }
