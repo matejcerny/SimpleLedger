@@ -3,7 +3,6 @@ import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import common.Configuration.buildAppConfig
 import common.Generator
-import ledger.LedgerActor
 import trasaction.TransactionActor
 
 object SimpleLedger extends IOApp with LazyLogging {
@@ -23,18 +22,7 @@ object SimpleLedger extends IOApp with LazyLogging {
 
       val appConfig = buildAppConfig(path)
 
-      TransactionActor.sendTransactionMessage(
-        Generator.randomTransactionMessage,
-        LedgerActor.setup()
-      )
-
-
-
-//      val transactionBehavior = Behaviors.setup[TransactionMessage] { c =>
-//        PersistenceActor(c, PersistenceAPI(appConfig.databaseConfig))
-//      }
-//
-//      ActorSystem(transactionBehavior, "test") ! randomTransactionMessage
+      TransactionActor.setup(appConfig) ! Generator.randomTransactionMessage
 
     }.as(ExitCode.Success)
 

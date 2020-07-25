@@ -1,45 +1,37 @@
 package ledger
 
-import akka.actor.typed.{ActorSystem, Behavior}
+import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
+import common.Configuration.AppConfig
 import common.Generator
-import persistence.Domain.PersistenceMessage
-import persistence.PersistenceActor
+import persistence.{PersistenceAPI, PersistenceActor}
 import trasaction.Domain.TransactionMessage
 
-class LedgerActor(context: ActorContext[TransactionMessage])
+class LedgerActor(context: ActorContext[TransactionMessage], appConfig: AppConfig)
     extends AbstractBehavior[TransactionMessage](context) {
 
   def onMessage(msg: TransactionMessage): Behavior[TransactionMessage] = {
-    //TODO
-    // - receiving raw message
-    // - getting fullName from IdentityActor
-    // - construct PersistenceMessage and send it to PersistenceActor
+    val persistenceMessage = Generator.randomPersistenceMessage(msg) // TODO: getting fullName from IdentityActor
+    val persistenceActor = context.spawn(
+      PersistenceActor.setup(PersistenceAPI(appConfig.databaseConfig)),
+      "LedgerToPersistence"
+    )
 
-    val persistenceMessage = Generator.randomPersistenceMessage(msg)
+    persistenceActor ! persistenceMessage
 
-    //context.spawn(PersistenceActor.setup())
-
-    ???
+    Behaviors.stopped
   }
 
 }
 
 object LedgerActor {
 
-  def apply(context: ActorContext[TransactionMessage]): LedgerActor = new LedgerActor(context)
+  def apply(context: ActorContext[TransactionMessage], appConfig: AppConfig): LedgerActor =
+    new LedgerActor(context, appConfig)
 
-  def setup(): ActorSystem[TransactionMessage] =
-    ActorSystem(
-      Behaviors.setup[TransactionMessage] { c =>
-        LedgerActor(c)
-      },
-      "TransactionToLedger"
-    )
-
-  def sendPersistenceMessage(
-    persistenceMessage: PersistenceMessage,
-    actorSystem: ActorSystem[PersistenceMessage]
-  ): Unit = actorSystem ! persistenceMessage
+  def setup(appConfig: AppConfig): Behavior[TransactionMessage] =
+    Behaviors.setup[TransactionMessage] { c =>
+      LedgerActor(c, appConfig)
+    }
 
 }
