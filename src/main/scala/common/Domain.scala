@@ -10,6 +10,7 @@ object Domain {
 
   case class Person(id: Id, fullName: FullName) { val asString: String = fullName.value }
 
+  //TODO: New type Amount with Currency
   case class Amount(value: BigDecimal) { require(value.precision <= 38 && value.scale <= 8) }
   object Amount {
     def min: Amount = Amount(BigDecimal("0.00000001"))

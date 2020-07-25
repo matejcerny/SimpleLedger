@@ -17,13 +17,13 @@ object SimpleLedger extends IOApp with LazyLogging {
       .as(ExitCode.Error)
 
   def runSuccess(path: String): IO[ExitCode] =
-    IO {
-      logger.info("Starting the application")
-
-      val appConfig = buildAppConfig(path)
-
-      TransactionActor.setup(appConfig) ! Generator.randomTransactionMessage
-
-    }.as(ExitCode.Success)
+    (
+      for {
+        _ <- IO(logger.info("Starting the application"))
+        appConfig <- IO(buildAppConfig(path))
+        actorSystem = TransactionActor.setup(appConfig)
+        randomMessage = Generator.randomTransactionMessage
+      } yield actorSystem ! randomMessage
+    ).as(ExitCode.Success)
 
 }

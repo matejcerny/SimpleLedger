@@ -11,13 +11,13 @@ class LedgerActor(context: ActorContext[TransactionMessage], appConfig: AppConfi
     extends AbstractBehavior[TransactionMessage](context) {
 
   def onMessage(msg: TransactionMessage): Behavior[TransactionMessage] = {
-    val persistenceMessage = Generator.randomPersistenceMessage(msg) // TODO: getting fullName from IdentityActor
     val persistenceActor = context.spawn(
       PersistenceActor.setup(PersistenceAPI(appConfig.databaseConfig)),
       "LedgerToPersistence"
     )
 
-    persistenceActor ! persistenceMessage
+    // TODO: get fullName from IdentityActor
+    persistenceActor ! Generator.randomPersistenceMessage(msg)
 
     Behaviors.stopped
   }
