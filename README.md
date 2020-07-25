@@ -1,5 +1,5 @@
-# Simple Ledger
-Demo app made with Cats, Akka, Doobie and Oracle database.
+# WIP: Simple Ledger
+Demo app made with Cats, Akka Typed Actors, Doobie and Oracle database.
 
 ## Usage
 Download and run docker image with Oracle 12c.
