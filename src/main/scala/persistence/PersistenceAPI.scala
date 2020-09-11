@@ -16,8 +16,8 @@ class PersistenceAPI(xa: Aux[IO, Unit]) {
       fr"  VALUES(" ++
       fr"  ${persistence.sender.asString}" ++
       fr", ${persistence.receiver.asString}" ++
-      fr", ${persistence.amount}" ++
-      fr", ${persistence.currency.symbol}" ++
+      fr", ${persistence.amount.value}" ++
+      fr", ${persistence.amount.currency.symbol}" ++
       fr", ${persistence.businessTime.value}" ++
       fr")").update.run.transact(xa)
 

@@ -18,14 +18,12 @@ class PersistenceActor(context: ActorContext[PersistenceMessage], persistenceAPI
 
 object PersistenceActor {
 
-  def setup(persistenceAPI: PersistenceAPI): Behavior[PersistenceMessage] =
-    Behaviors.setup[PersistenceMessage] { c =>
-      PersistenceActor(c, persistenceAPI)
-    }
-
   def apply(
     context: ActorContext[PersistenceMessage],
     persistenceAPI: PersistenceAPI
   ): PersistenceActor = new PersistenceActor(context, persistenceAPI)
+
+  def setup(persistenceAPI: PersistenceAPI): Behavior[PersistenceMessage] =
+    Behaviors.setup[PersistenceMessage](apply(_, persistenceAPI))
 
 }

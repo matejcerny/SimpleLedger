@@ -1,6 +1,6 @@
 package persistence
 
-import common.Domain.{Amount, BusinessTime, Currency, Person}
+import common.Domain.{Amount, BusinessTime, Person}
 
 object Domain {
 
@@ -8,7 +8,6 @@ object Domain {
     sender: Person,
     receiver: Person,
     amount: Amount,
-    currency: Currency,
     businessTime: BusinessTime
   )
 

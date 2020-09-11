@@ -30,15 +30,16 @@ object Generator {
 
   def randomAmount: Amount =
     Amount(
-      (BigDecimal(nextInt(100000)) + BigDecimal(nextDouble()).setScale(8, RoundingMode.HALF_UP)).abs
+      (BigDecimal(nextInt(100000)) + BigDecimal(nextDouble())
+        .setScale(8, RoundingMode.HALF_UP)).abs,
+      randomCurrency
     )
 
   def randomTransactionMessage: TransactionMessage = TransactionMessage(
     Transaction(
       randomId,
       randomId,
-      randomAmount,
-      randomCurrency
+      randomAmount
     )
   )
 
@@ -48,10 +49,9 @@ object Generator {
         randomPerson,
         randomPerson,
         randomAmount,
-        randomCurrency,
         BusinessTime.now
       )
-  )
+    )
 
   def randomPersistenceMessage(transactionMessage: TransactionMessage): PersistenceMessage =
     PersistenceMessage(
@@ -59,10 +59,22 @@ object Generator {
         randomPerson,
         randomPerson,
         transactionMessage.transaction.amount,
-        transactionMessage.transaction.currency,
         transactionMessage.transaction.businessTime
       )
     )
 
+  def randomPersistenceMessage(
+    sender: Person,
+    receiver: Person,
+    transactionMessage: TransactionMessage
+  ): PersistenceMessage =
+    PersistenceMessage(
+      Persistence(
+        sender,
+        receiver,
+        transactionMessage.transaction.amount,
+        transactionMessage.transaction.businessTime
+      )
+    )
 
 }

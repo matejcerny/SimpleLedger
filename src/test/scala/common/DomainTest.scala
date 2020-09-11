@@ -24,9 +24,12 @@ class DomainTest extends AnyFunSuite {
 
   test("Amount") {
     assertThrows[IllegalArgumentException](
-      Amount(BigDecimal("123456789012345678901234567890123456789"))
+      Amount(
+        BigDecimal("123456789012345678901234567890123456789"),
+        Currency.default
+      )
     )
-    assertThrows[IllegalArgumentException](Amount(BigDecimal("0.000000001")))
+    assertThrows[IllegalArgumentException](Amount(BigDecimal("0.000000001"), Currency.default))
   }
 
   test("Currency") {

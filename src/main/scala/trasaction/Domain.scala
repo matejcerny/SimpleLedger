@@ -1,6 +1,6 @@
 package trasaction
 
-import common.Domain.{Amount, BusinessTime, Currency, Id}
+import common.Domain.{Amount, BusinessTime, Id}
 
 object Domain {
 
@@ -8,7 +8,6 @@ object Domain {
     senderId: Id,
     receiver: Id,
     amount: Amount,
-    currency: Currency,
     businessTime: BusinessTime = BusinessTime.now
   )
 
