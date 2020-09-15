@@ -1,8 +1,6 @@
-package common
-
+import TransactionActor.Transaction
 import common.Domain._
 import persistence.Domain.{Persistence, PersistenceMessage}
-import trasaction.Domain.{Transaction, TransactionMessage}
 
 import scala.math.BigDecimal.RoundingMode
 import scala.util.Random.{nextDouble, nextInt}
@@ -35,13 +33,12 @@ object Generator {
       randomCurrency
     )
 
-  def randomTransactionMessage: TransactionMessage = TransactionMessage(
+  def randomTransactionMessage: Transaction =
     Transaction(
       randomId,
       randomId,
       randomAmount
     )
-  )
 
   def randomPersistenceMessage: PersistenceMessage =
     PersistenceMessage(
@@ -53,28 +50,28 @@ object Generator {
       )
     )
 
-  def randomPersistenceMessage(transactionMessage: TransactionMessage): PersistenceMessage =
-    PersistenceMessage(
-      Persistence(
-        randomPerson,
-        randomPerson,
-        transactionMessage.transaction.amount,
-        transactionMessage.transaction.businessTime
-      )
-    )
-
-  def randomPersistenceMessage(
-    sender: Person,
-    receiver: Person,
-    transactionMessage: TransactionMessage
-  ): PersistenceMessage =
-    PersistenceMessage(
-      Persistence(
-        sender,
-        receiver,
-        transactionMessage.transaction.amount,
-        transactionMessage.transaction.businessTime
-      )
-    )
+//  def randomPersistenceMessage(transactionMessage: TransactionMessage): PersistenceMessage =
+//    PersistenceMessage(
+//      Persistence(
+//        randomPerson,
+//        randomPerson,
+//        transactionMessage.transaction.amount,
+//        transactionMessage.transaction.businessTime
+//      )
+//    )
+//
+//  def randomPersistenceMessage(
+//    sender: Person,
+//    receiver: Person,
+//    transactionMessage: TransactionMessage
+//  ): PersistenceMessage =
+//    PersistenceMessage(
+//      Persistence(
+//        sender,
+//        receiver,
+//        transactionMessage.transaction.amount,
+//        transactionMessage.transaction.businessTime
+//      )
+//    )
 
 }

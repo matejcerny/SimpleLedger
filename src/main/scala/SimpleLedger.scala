@@ -1,9 +1,8 @@
+import akka.actor.typed.ActorSystem
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import common.Configuration.buildAppConfig
-import common.Generator
-import trasaction.TransactionActor
 
 object SimpleLedger extends IOApp with LazyLogging {
 
@@ -21,9 +20,10 @@ object SimpleLedger extends IOApp with LazyLogging {
       for {
         _ <- IO(logger.info("Starting the application"))
         appConfig <- IO(buildAppConfig(path))
-        actorSystem = TransactionActor.setup(appConfig)
+        system = ActorSystem(TransactionActor(), "Transactions")
         randomMessage = Generator.randomTransactionMessage
-      } yield actorSystem ! randomMessage
+      } yield system ! randomMessage
     ).as(ExitCode.Success)
+
 
 }

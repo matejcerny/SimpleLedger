@@ -1,7 +1,5 @@
-package common
-
 import common.Domain.{Amount, Currency}
-import common.Generator._
+import Generator._
 import org.scalacheck.Prop._
 import org.scalacheck.Properties
 
