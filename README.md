@@ -1,5 +1,18 @@
-# WIP: Simple Ledger
-Demo app made with Cats, Akka Typed Actors, Doobie and Oracle database.
+# Simple Ledger
+Demo app made with Akka Typed Actors, Cats, Doobie and Oracle database.
+
+```mermaid
+sequenceDiagram
+participant TransactionActor
+participant LedgerActor
+participant IdentityActor
+participant PersistenceActor
+
+TransactionActor ->> LedgerActor: transaction
+LedgerActor ->> IdentityActor: request for identities
+IdentityActor -->> LedgerActor: response
+LedgerActor ->> PersistenceActor: r
+```
 
 ## Usage
 Download and run docker image with Oracle 12c.
