@@ -1,6 +1,5 @@
-import TransactionActor.Transaction
+import actors.TransactionActor.Transaction
 import common.Domain._
-import persistence.Domain.{Persistence, PersistenceMessage}
 
 import scala.math.BigDecimal.RoundingMode
 import scala.util.Random.{nextDouble, nextInt}
@@ -40,15 +39,15 @@ object Generator {
       randomAmount
     )
 
-  def randomPersistenceMessage: PersistenceMessage =
-    PersistenceMessage(
-      Persistence(
-        randomPerson,
-        randomPerson,
-        randomAmount,
-        BusinessTime.now
-      )
-    )
+//  def randomPersistenceMessage: PersistenceMessage =
+//    PersistenceMessage(
+//      Persistence(
+//        randomPerson,
+//        randomPerson,
+//        randomAmount,
+//        BusinessTime.now
+//      )
+//    )
 
 //  def randomPersistenceMessage(transactionMessage: TransactionMessage): PersistenceMessage =
 //    PersistenceMessage(

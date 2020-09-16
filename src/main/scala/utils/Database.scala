@@ -1,34 +1,42 @@
-package persistence
+package utils
 
 import cats.effect._
 import common.Configuration.DatabaseConfig
+import common.Domain.{Amount, BusinessTime, FullName}
 import doobie._
 import doobie.implicits._
 import doobie.implicits.javatime.JavaTimeLocalDateTimeMeta
 import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor.Aux
-import persistence.Domain.Persistence
+import utils.Database.TransactionData
 
-class PersistenceAPI(xa: Aux[IO, Unit]) {
+class Database(xa: Aux[IO, Unit]) {
 
-  def insert(persistence: Persistence): IO[Int] =
+  def insert(transactionData: TransactionData): IO[Int] =
     (fr"INSERT INTO simple_ledger.tb_data(sender, receiver, amount, currency, business_time)" ++
       fr"  VALUES(" ++
-      fr"  ${persistence.sender.asString}" ++
-      fr", ${persistence.receiver.asString}" ++
-      fr", ${persistence.amount.value}" ++
-      fr", ${persistence.amount.currency.symbol}" ++
-      fr", ${persistence.businessTime.value}" ++
+      fr"  ${transactionData.sender.value}" ++
+      fr", ${transactionData.receiver.value}" ++
+      fr", ${transactionData.amount.value}" ++
+      fr", ${transactionData.amount.currency.symbol}" ++
+      fr", ${transactionData.businessTime.value}" ++
       fr")").update.run.transact(xa)
 
 }
 
-object PersistenceAPI {
+object Database {
 
-  def apply(databaseConfig: DatabaseConfig): PersistenceAPI = {
+  case class TransactionData(
+    sender: FullName,
+    receiver: FullName,
+    amount: Amount,
+    businessTime: BusinessTime
+  )
+
+  def apply(databaseConfig: DatabaseConfig): Database = {
     implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContexts.synchronous)
 
-    new PersistenceAPI(
+    new Database(
       Transactor.fromDriverManager[IO](
         databaseConfig.driver,
         databaseConfig.connectionString,

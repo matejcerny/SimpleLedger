@@ -3,11 +3,15 @@ package common
 import java.io.{BufferedReader, FileNotFoundException, InputStreamReader}
 import java.util.concurrent.TimeUnit
 
+import akka.actor.typed.Extension
 import akka.util.Timeout
 import com.typesafe.config.{Config, ConfigFactory}
+import common.Configuration.AppConfig
 
 import scala.concurrent.duration.FiniteDuration
 import scala.util.{Failure, Success, Try}
+
+class Configuration(appConfig: AppConfig) extends Extension
 
 object Configuration {
 

@@ -1,3 +1,4 @@
+import actors.TransactionActor
 import akka.actor.typed.ActorSystem
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._

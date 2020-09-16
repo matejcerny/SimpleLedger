@@ -1,4 +1,6 @@
-import LedgerActor.TransactionMessage
+package actors
+
+import actors.LedgerActor.TransactionMessage
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
 import akka.util.Timeout
@@ -15,7 +17,7 @@ object TransactionActor {
 
   def apply()(implicit timeout: Timeout): Behavior[Transaction] =
     Behaviors.receive { (context, msg) =>
-      context.log.info("Transaction received by TransactionActor")
+      context.log.info("Transaction received")
 
       val ledgerActor = context.spawn(LedgerActor(), "TransactionToLedger")
 
