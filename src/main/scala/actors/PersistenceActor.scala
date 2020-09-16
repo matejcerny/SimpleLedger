@@ -2,9 +2,8 @@ package actors
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import common.Configuration.DatabaseConfig
+import common.Configuration
 import common.Domain.{Amount, BusinessTime, Person}
-import utils.Database
 import utils.Database.TransactionData
 
 object PersistenceActor {
@@ -19,10 +18,9 @@ object PersistenceActor {
   def apply(): Behavior[PersistenceMessage] =
     Behaviors.receive { (context, msg) =>
       context.log.info("PersistenceMessage received")
-      // create database instance from databaseConfig
-      val databaseConfig: DatabaseConfig = ???
+      context.log.info(s"${msg.amount}")
 
-      Database(databaseConfig)
+      Configuration(context.system).database
         .insert(
           TransactionData(
             msg.sender.fullName,

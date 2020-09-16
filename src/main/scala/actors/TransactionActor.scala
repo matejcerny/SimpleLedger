@@ -3,7 +3,6 @@ package actors
 import actors.LedgerActor.TransactionMessage
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import akka.util.Timeout
 import common.Domain.{Amount, BusinessTime, Id}
 
 object TransactionActor {
@@ -15,14 +14,17 @@ object TransactionActor {
     businessTime: BusinessTime = BusinessTime.now
   )
 
-  def apply()(implicit timeout: Timeout): Behavior[Transaction] =
+  def apply(): Behavior[Transaction] =
     Behaviors.receive { (context, msg) =>
       context.log.info("Transaction received")
 
-      val ledgerActor = context.spawn(LedgerActor(), "TransactionToLedger")
+      val ledgerActor = context.spawn(
+        LedgerActor(),
+        "TransactionToLedger"
+      )
 
       ledgerActor ! TransactionMessage(msg.senderId, msg.receiverId, msg.amount, msg.businessTime)
-      Behaviors.stopped
+      Behaviors.same
     }
 
 }

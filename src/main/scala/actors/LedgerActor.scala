@@ -5,6 +5,7 @@ import actors.PersistenceActor.PersistenceMessage
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
 import akka.util.Timeout
+import common.Configuration
 import common.Domain.{Amount, BusinessTime, Id, Person}
 
 import scala.util.{Failure, Success}
@@ -26,7 +27,7 @@ object LedgerActor {
     businessTime: BusinessTime
   ) extends Command
 
-  def apply()(implicit timeout: Timeout): Behavior[Command] =
+  def apply(): Behavior[Command] =
     Behaviors.setup[Command] { context =>
       Behaviors.receiveMessage {
         case TransactionWithIdentities(sender, receiver, amount, businessTime) =>
@@ -40,6 +41,7 @@ object LedgerActor {
         case TransactionMessage(senderId, receiverId, amount, businessTime) =>
           context.log.info("TransactionMessage received")
           val identityActor = context.spawn(IdentityActor(), "LedgerToIdentity")
+          implicit val timeout: Timeout = Configuration(context.system).timeout
 
           context.ask(identityActor, a => IdentityRequest(senderId, receiverId, a)) {
             case Success(r) =>

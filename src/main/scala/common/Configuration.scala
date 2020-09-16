@@ -3,17 +3,24 @@ package common
 import java.io.{BufferedReader, FileNotFoundException, InputStreamReader}
 import java.util.concurrent.TimeUnit
 
-import akka.actor.typed.Extension
+import akka.actor.typed.{ActorSystem, Extension, ExtensionId}
 import akka.util.Timeout
 import com.typesafe.config.{Config, ConfigFactory}
-import common.Configuration.AppConfig
+import common.Configuration.{DatabaseConfig, buildAppConfig}
+import utils.Database
 
 import scala.concurrent.duration.FiniteDuration
 import scala.util.{Failure, Success, Try}
 
-class Configuration(appConfig: AppConfig) extends Extension
+class Configuration(system: ActorSystem[_]) extends Extension {
+  private val appConfig = buildAppConfig(system.settings.config)
+  private val db = Database(appConfig.databaseConfig)
 
-object Configuration {
+  def database: Database = db
+  def timeout: Timeout = appConfig.timeout
+}
+
+object Configuration extends ExtensionId[Configuration] {
 
   case class DatabaseConfig(
     username: String,
@@ -67,4 +74,6 @@ object Configuration {
     */
   def buildAppConfig(path: String): AppConfig = buildAppConfig(buildConfig(path))
 
+  def createExtension(system: ActorSystem[_]): Configuration =
+    new Configuration(system)
 }
