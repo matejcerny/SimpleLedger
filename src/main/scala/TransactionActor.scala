@@ -1,5 +1,7 @@
+import LedgerActor.TransactionMessage
+import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, Behavior}
+import akka.util.Timeout
 import common.Domain.{Amount, BusinessTime, Id}
 
 object TransactionActor {
@@ -10,15 +12,14 @@ object TransactionActor {
     amount: Amount,
     businessTime: BusinessTime = BusinessTime.now
   )
-  case class TransactionMessage(transaction: Transaction, from: ActorRef[Transaction])
 
-  def apply(): Behavior[Transaction] =
-    Behaviors.receive { (context, message) =>
+  def apply()(implicit timeout: Timeout): Behavior[Transaction] =
+    Behaviors.receive { (context, msg) =>
       context.log.info("Transaction received by TransactionActor")
 
       val ledgerActor = context.spawn(LedgerActor(), "TransactionToLedger")
 
-      ledgerActor ! TransactionMessage(message, context.self)
+      ledgerActor ! TransactionMessage(msg.senderId, msg.receiverId, msg.amount, msg.businessTime)
       Behaviors.stopped
     }
 

@@ -1,9 +1,12 @@
 package common
 
 import java.io.{BufferedReader, FileNotFoundException, InputStreamReader}
+import java.util.concurrent.TimeUnit
 
+import akka.util.Timeout
 import com.typesafe.config.{Config, ConfigFactory}
 
+import scala.concurrent.duration.FiniteDuration
 import scala.util.{Failure, Success, Try}
 
 object Configuration {
@@ -16,7 +19,7 @@ object Configuration {
     schema: String
   )
 
-  case class AppConfig(databaseConfig: DatabaseConfig)
+  case class AppConfig(databaseConfig: DatabaseConfig, timeout: Timeout)
 
   /**
     * Loads and parse configuration file
@@ -38,6 +41,7 @@ object Configuration {
     */
   def buildAppConfig(config: Config): AppConfig = {
     val database = config.getConfig("simpleLedger.database")
+    val duration = config.getDuration("simpleLedger.timeout")
 
     AppConfig(
       DatabaseConfig(
@@ -46,7 +50,8 @@ object Configuration {
         database.getString("connectionString"),
         database.getString("driver"),
         database.getString("schema")
-      )
+      ),
+      FiniteDuration(duration.toNanos, TimeUnit.NANOSECONDS)
     )
   }
 

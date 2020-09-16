@@ -2,6 +2,7 @@ package common
 
 import java.io.FileNotFoundException
 
+import akka.util.Timeout
 import common.Configuration.{AppConfig, DatabaseConfig, buildAppConfig, buildConfig}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -24,7 +25,8 @@ class ConfigurationTest extends AnyFunSuite {
         "ORA_CONNECTION_STRING",
         "oracle.jdbc.driver.OracleDriver",
         "acc"
-      )
+      ),
+      Timeout.zero
     )
     assert(buildAppConfig(config) == appConfig)
     assert(buildAppConfig(path) == appConfig)

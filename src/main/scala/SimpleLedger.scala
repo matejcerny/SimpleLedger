@@ -20,10 +20,9 @@ object SimpleLedger extends IOApp with LazyLogging {
       for {
         _ <- IO(logger.info("Starting the application"))
         appConfig <- IO(buildAppConfig(path))
-        system = ActorSystem(TransactionActor(), "Transactions")
+        system = ActorSystem(TransactionActor()(appConfig.timeout), "Transactions")
         randomMessage = Generator.randomTransactionMessage
       } yield system ! randomMessage
     ).as(ExitCode.Success)
-
 
 }

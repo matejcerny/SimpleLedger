@@ -1,35 +1,48 @@
-import TransactionActor.TransactionMessage
-import akka.actor.typed.{ActorRef, Behavior}
+import IdentityActor.IdentityRequest
+import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import common.Domain.{FullName, Id}
+import akka.util.Timeout
+import common.Domain.{Amount, BusinessTime, Id, Person}
+
+import scala.util.Success
 
 object LedgerActor {
 
-  case class IdentityRequest(senderId: Id, receiverId: Id)
-  case class IdentityResponse(sender: FullName, receiver: FullName)
+  sealed trait Command
+  case class TransactionMessage(
+    senderId: Id,
+    receiverId: Id,
+    amount: Amount,
+    businessTime: BusinessTime
+  ) extends Command
+  case class IdentityMessage(sender: Person, receiver: Person) extends Command
 
-  def apply(): Behavior[TransactionMessage] =
-    Behaviors.receive { (context, message) =>
-      import message.transaction._
+  def apply()(implicit timeout: Timeout): Behavior[Command] =
+    Behaviors.setup[Command] { context =>
+      Behaviors.receiveMessage {
+        case IdentityMessage(sender, receiver) =>
+          context.log.info("IdentityMessage received by LedgerActor")
+          context.log.info(s"Sender: $sender, receiver: $receiver")
 
-      context.log.info("TransactionMessage received by LedgerActor")
-      context.log.info(s"Sender: $senderId, receiver: $receiverId")
+          // TODO: persist persons
 
-      // ask for fullName to IdentityActor
-      val identityActor = context.spawn(IdentityActor(), "LedgerToIdentity")
-      identityActor ! IdentityRequest(senderId, receiverId)
+          Behaviors.same
 
+        case TransactionMessage(senderId, receiverId, _, _) =>
+          context.log.info("TransactionMessage received by LedgerActor")
+          val identityActor = context.spawn(IdentityActor(), "LedgerToIdentity")
 
-      Behaviors.stopped
+          context.ask(identityActor, a => IdentityRequest(senderId, receiverId, a)) {
+            case Success(r) =>
+              IdentityMessage(
+                Person(senderId, r.sender),
+                Person(receiverId, r.receiver)
+              )
+          }
+
+          Behaviors.same
+      }
+
     }
-
-
-  def response(): Behavior[IdentityResponse] =
-  Behaviors.receive { (context, message) =>
-    context.log.info("IdentityResponse received by LedgerActor")
-    context.log.info(s"Sender: ${message.sender}, receiver: ${message.receiver}")
-
-    Behaviors.stopped
-  }
 
 }
