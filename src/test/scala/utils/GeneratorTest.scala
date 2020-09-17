@@ -1,7 +1,9 @@
+package utils
+
 import common.Domain.{Amount, Currency}
-import Generator._
 import org.scalacheck.Prop._
 import org.scalacheck.Properties
+import utils.Generator._
 
 object GeneratorTest extends Properties("common.GeneratorTest") {
 

@@ -4,6 +4,7 @@ import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import common.Configuration.buildConfig
+import utils.Generator
 
 object SimpleLedger extends IOApp with LazyLogging {
 

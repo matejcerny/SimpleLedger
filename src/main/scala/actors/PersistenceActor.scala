@@ -29,7 +29,7 @@ object PersistenceActor {
             msg.businessTime
           )
         )
-        .unsafeRunSync()
+        //.unsafeRunSync()
 
       Behaviors.same
     }

@@ -27,6 +27,11 @@ CREATE TABLE SIMPLE_LEDGER.TB_DATA(
   , business_time TIMESTAMP NOT NULL
 ) TABLESPACE SIMPLE_LEDGER_DATA;
 
+CREATE TABLE SIMPLE_LEDGER.TB_USER(
+    id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY
+  , fullname VARCHAR2(100) NOT NULL
+) TABLESPACE SIMPLE_LEDGER_DATA;
+
 /* Constraints */
 ALTER TABLE SIMPLE_LEDGER.TB_DATA
   ADD CONSTRAINT CHK_SENDER
@@ -44,5 +49,68 @@ ALTER TABLE SIMPLE_LEDGER.TB_DATA
   ADD CONSTRAINT CHK_CURRENCY
   CHECK (LENGTH(currency) >= 3 AND LENGTH(currency) <= 4 AND currency = UPPER(currency));
 
+ALTER TABLE SIMPLE_LEDGER.TB_USER
+  ADD CONSTRAINT CHK_FULLNAME
+  CHECK (LENGTH(fullname) > 3 AND fullname LIKE '% %');
+
 /* Grant to access table */
 GRANT SELECT, INSERT ON SIMPLE_LEDGER.TB_DATA TO SIMPLE_LEDGER_APP;
+GRANT SELECT ON SIMPLE_LEDGER.TB_USER TO SIMPLE_LEDGER_APP;
+
+/* Users */
+INSERT INTO SIMPLE_LEDGER.TB_USER(fullname)
+  WITH names AS (
+    SELECT 'Demarcus Dibernardo' AS fullname FROM dual UNION ALL
+    SELECT 'Kiesha Kua' FROM dual UNION ALL
+    SELECT 'Nydia Newlon' FROM dual UNION ALL
+    SELECT 'Ava Aquino' FROM dual UNION ALL
+    SELECT 'Lauryn Lachowicz' FROM dual UNION ALL
+    SELECT 'Shoshana Shackelford' FROM dual UNION ALL
+    SELECT 'Velma Vawter' FROM dual UNION ALL
+    SELECT 'Katina Korte' FROM dual UNION ALL
+    SELECT 'Kacy Kruger' FROM dual UNION ALL
+    SELECT 'Tosha Turmelle' FROM dual UNION ALL
+    SELECT 'Catrice Corder' FROM dual UNION ALL
+    SELECT 'Eliseo Eccles' FROM dual UNION ALL
+    SELECT 'Carlena Coakley' FROM dual UNION ALL
+    SELECT 'Mallory Mcculler' FROM dual UNION ALL
+    SELECT 'Marilynn Manz' FROM dual UNION ALL
+    SELECT 'Gita Guo' FROM dual UNION ALL
+    SELECT 'Alfredia Arebalo' FROM dual UNION ALL
+    SELECT 'Liane Laguardia' FROM dual UNION ALL
+    SELECT 'Russell Rochell' FROM dual UNION ALL
+    SELECT 'Peter Perlmutter' FROM dual UNION ALL
+    SELECT 'Alita Abron' FROM dual UNION ALL
+    SELECT 'Adah Ausmus' FROM dual UNION ALL
+    SELECT 'Mitchell Mattingly' FROM dual UNION ALL
+    SELECT 'Tonette Toews' FROM dual UNION ALL
+    SELECT 'Brett Batt' FROM dual UNION ALL
+    SELECT 'Eugenia Eisenstein' FROM dual UNION ALL
+    SELECT 'Tiffanie Tackitt' FROM dual UNION ALL
+    SELECT 'Minh Marsala' FROM dual UNION ALL
+    SELECT 'Vaughn Vida' FROM dual UNION ALL
+    SELECT 'Terica Toms' FROM dual UNION ALL
+    SELECT 'Juana Jeremiah' FROM dual UNION ALL
+    SELECT 'Katherine Keefer' FROM dual UNION ALL
+    SELECT 'Myesha Macek' FROM dual UNION ALL
+    SELECT 'Bette Bribiesca' FROM dual UNION ALL
+    SELECT 'Dionne Durrett' FROM dual UNION ALL
+    SELECT 'Arvilla Almquist' FROM dual UNION ALL
+    SELECT 'Laci Lawver' FROM dual UNION ALL
+    SELECT 'Kip Kearney' FROM dual UNION ALL
+    SELECT 'Raguel Rising' FROM dual UNION ALL
+    SELECT 'Rich Ryland' FROM dual UNION ALL
+    SELECT 'Charis Claflin' FROM dual UNION ALL
+    SELECT 'Shaquita Soliz' FROM dual UNION ALL
+    SELECT 'Zula Zwick' FROM dual UNION ALL
+    SELECT 'Bill Bachmann' FROM dual UNION ALL
+    SELECT 'Jack Jeppesen' FROM dual UNION ALL
+    SELECT 'Lula Locicero' FROM dual UNION ALL
+    SELECT 'Christena Clausing' FROM dual UNION ALL
+    SELECT 'Estella Edenfield' FROM dual UNION ALL
+    SELECT 'Roseanna Rosa' FROM dual UNION ALL
+    SELECT 'Cassaundra Colclough' FROM dual
+  )
+  SELECT fullname FROM names;
+
+COMMIT;

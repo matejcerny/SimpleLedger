@@ -2,7 +2,7 @@ package utils
 
 import cats.effect._
 import common.Configuration.DatabaseConfig
-import common.Domain.{Amount, BusinessTime, FullName}
+import common.Domain.{Amount, BusinessTime, FullName, Id}
 import doobie._
 import doobie.implicits._
 import doobie.implicits.javatime.JavaTimeLocalDateTimeMeta
@@ -21,6 +21,12 @@ class Database(xa: Aux[IO, Unit]) {
       fr", ${transactionData.amount.currency.symbol}" ++
       fr", ${transactionData.businessTime.value}" ++
       fr")").update.run.transact(xa)
+
+  def getPersonFullName(personId: Id): IO[List[String]] =
+    sql"SELECT fullname FROM simple_ledger.tb_user WHERE(id=${personId.value})"
+      .query[String]
+      .to[List]
+      .transact(xa)
 
 }
 

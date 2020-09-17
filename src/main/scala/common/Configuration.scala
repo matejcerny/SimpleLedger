@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit
 import akka.actor.typed.{ActorSystem, Extension, ExtensionId}
 import akka.util.Timeout
 import com.typesafe.config.{Config, ConfigFactory}
-import common.Configuration.{DatabaseConfig, buildAppConfig}
+import common.Configuration.buildAppConfig
 import utils.Database
 
 import scala.concurrent.duration.FiniteDuration
@@ -74,6 +74,5 @@ object Configuration extends ExtensionId[Configuration] {
     */
   def buildAppConfig(path: String): AppConfig = buildAppConfig(buildConfig(path))
 
-  def createExtension(system: ActorSystem[_]): Configuration =
-    new Configuration(system)
+  def createExtension(system: ActorSystem[_]): Configuration = new Configuration(system)
 }

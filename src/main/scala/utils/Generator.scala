@@ -1,3 +1,5 @@
+package utils
+
 import actors.TransactionActor.Transaction
 import common.Domain._
 
