@@ -2,6 +2,7 @@ package actors
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
+import common.Configuration
 import common.Domain.{FullName, Id}
 
 object IdentityActor {
@@ -13,10 +14,17 @@ object IdentityActor {
     Behaviors.receive { (context, msg) =>
       context.log.info("IdentityRequest received")
 
-      // TODO: find names by ids
-      val identityResponse = IdentityResponse(FullName("pan test"), FullName("pan test2"))
+      val db = Configuration(context.system).database
+      (
+        for {
+          receiver <- db.getPersonFullName(msg.receiverId)
+          sender <- db.getPersonFullName(msg.senderId)
+        } yield IdentityResponse(FullName(receiver), FullName(sender))
+      ).value.unsafeRunSync() match {
+        case Some(identityResponse) => msg.replyTo ! identityResponse
+        case None => ???
+      }
 
-      msg.replyTo ! identityResponse
       Behaviors.same
     }
 

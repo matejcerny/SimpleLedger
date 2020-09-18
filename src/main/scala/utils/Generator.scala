@@ -16,7 +16,7 @@ object Generator {
     "Hrnčíř", "Kadlec", "Krejčí", "Mlynář", "Sedlák", "Ševčík", "Tesař", "Zedníček",
   )
 
-  def randomId: Id = Id(1)
+  def randomId: Id = Id(nextInt(50))
 
   def randomPerson: Person = Person(
     randomId,

@@ -1,6 +1,7 @@
 package utils
 
 import cats.effect._
+import cats.data.OptionT
 import common.Configuration.DatabaseConfig
 import common.Domain.{Amount, BusinessTime, FullName, Id}
 import doobie._
@@ -22,11 +23,13 @@ class Database(xa: Aux[IO, Unit]) {
       fr", ${transactionData.businessTime.value}" ++
       fr")").update.run.transact(xa)
 
-  def getPersonFullName(personId: Id): IO[List[String]] =
-    sql"SELECT fullname FROM simple_ledger.tb_user WHERE(id=${personId.value})"
-      .query[String]
-      .to[List]
-      .transact(xa)
+  def getPersonFullName(personId: Id): OptionT[IO, String] =
+    OptionT.liftF(
+      sql"SELECT fullname FROM simple_ledger.tb_user WHERE(id=${personId.value})"
+        .query[String]
+        .option
+        .transact(xa)
+    )
 
 }
 
