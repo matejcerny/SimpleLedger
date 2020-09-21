@@ -7,24 +7,26 @@ import common.Domain.{Amount, BusinessTime, Id}
 
 object TransactionActor {
 
+  sealed trait Command
   case class Transaction(
     senderId: Id,
     receiverId: Id,
     amount: Amount,
     businessTime: BusinessTime = BusinessTime.now
-  )
+  ) extends Command
+  case object GracefulShutdown extends Command
 
-  def apply(): Behavior[Transaction] =
-    Behaviors.receive { (context, msg) =>
-      context.log.info("Transaction received")
+  def apply(): Behavior[Command] =
+    Behaviors.receive {
+      case (context, msg: Transaction) =>
+        context.log.info("Transaction received")
+        val ledgerActor = context.spawn(LedgerActor(), s"TransactionToLedger")
 
-      val ledgerActor = context.spawn(
-        LedgerActor(),
-        "TransactionToLedger"
-      )
+        ledgerActor ! TransactionMessage(msg.senderId, msg.receiverId, msg.amount, msg.businessTime)
+        Behaviors.same
 
-      ledgerActor ! TransactionMessage(msg.senderId, msg.receiverId, msg.amount, msg.businessTime)
-      Behaviors.same
+      case (_, GracefulShutdown) =>
+        Behaviors.stopped
     }
 
 }

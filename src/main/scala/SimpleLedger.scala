@@ -1,4 +1,5 @@
 import actors.TransactionActor
+import actors.TransactionActor.GracefulShutdown
 import akka.actor.typed.ActorSystem
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
@@ -22,9 +23,15 @@ object SimpleLedger extends IOApp with LazyLogging {
       for {
         _ <- IO(logger.info("Starting the application"))
         config <- IO(buildConfig(path))
-        system = ActorSystem(TransactionActor(), "Transactions", config)
-        randomMessage = Generator.randomTransactionMessage
-      } yield system ! randomMessage
+      } yield {
+        val system = ActorSystem(TransactionActor(), "Transactions", config)
+
+        system ! Generator.randomTransactionMessage
+        //system ! Generator.randomTransactionMessage
+
+        Thread.sleep(10000)
+        system ! GracefulShutdown
+      }
     ).as(ExitCode.Success)
 
 }

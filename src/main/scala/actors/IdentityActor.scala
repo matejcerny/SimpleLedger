@@ -7,8 +7,10 @@ import common.Domain.{FullName, Id}
 
 object IdentityActor {
 
-  case class IdentityRequest(senderId: Id, receiverId: Id, replyTo: ActorRef[IdentityResponse])
-  case class IdentityResponse(sender: FullName, receiver: FullName)
+  sealed trait Response
+  case class IdentityRequest(senderId: Id, receiverId: Id, replyTo: ActorRef[Response])
+  case class IdentityResponse(sender: FullName, receiver: FullName) extends Response
+  case class FailedResponse(reason: String) extends Response
 
   def apply(): Behavior[IdentityRequest] =
     Behaviors.receive { (context, msg) =>
@@ -22,7 +24,7 @@ object IdentityActor {
         } yield IdentityResponse(FullName(receiver), FullName(sender))
       ).value.unsafeRunSync() match {
         case Some(identityResponse) => msg.replyTo ! identityResponse
-        case None => ???
+        case None => msg.replyTo ! FailedResponse("Person not found")
       }
 
       Behaviors.same

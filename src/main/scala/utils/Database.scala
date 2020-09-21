@@ -24,7 +24,7 @@ class Database(xa: Aux[IO, Unit]) {
       fr")").update.run.transact(xa)
 
   def getPersonFullName(personId: Id): OptionT[IO, String] =
-    OptionT.liftF(
+    OptionT(
       sql"SELECT fullname FROM simple_ledger.tb_user WHERE(id=${personId.value})"
         .query[String]
         .option

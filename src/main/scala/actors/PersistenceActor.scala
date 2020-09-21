@@ -18,7 +18,6 @@ object PersistenceActor {
   def apply(): Behavior[PersistenceMessage] =
     Behaviors.receive { (context, msg) =>
       context.log.info("PersistenceMessage received")
-      context.log.info(s"${msg.amount}")
 
       Configuration(context.system).database
         .insert(
@@ -29,7 +28,7 @@ object PersistenceActor {
             msg.businessTime
           )
         )
-        //.unsafeRunSync()
+        .unsafeRunSync()
 
       Behaviors.same
     }
