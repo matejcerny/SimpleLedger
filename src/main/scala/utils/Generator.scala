@@ -4,26 +4,11 @@ import actors.TransactionActor.Transaction
 import common.Domain._
 
 import scala.math.BigDecimal.RoundingMode
-import scala.util.Random.{nextDouble, nextInt}
+import scala.util.Random.{between, nextDouble, nextInt}
 
 object Generator {
 
-  val names: List[String] = List(
-    "Albert", "Anita", "Baltazar", "Boris", "Daisy", "Egon", "Fjodor", "Gerda", "Hugo",
-    "Izabela", "Justýna", "Kvido", "Lubor", "Milena", "Nikita", "Pius", "Regína", "Tristan"
-  )
-  val surnames: List[String] = List(
-    "Hrnčíř", "Kadlec", "Krejčí", "Mlynář", "Sedlák", "Ševčík", "Tesař", "Zedníček",
-  )
-
-  def randomId: Id = Id(nextInt(50))
-
-  def randomPerson: Person = Person(
-    randomId,
-    FullName(
-      names(nextInt(names.length)) + " " + surnames(nextInt(surnames.length))
-    )
-  )
+  def randomId: Id = Id(between(0, 60))
 
   def randomCurrency: Currency = Currency.toList(nextInt(Currency.size))
 
@@ -40,39 +25,5 @@ object Generator {
       randomId,
       randomAmount
     )
-
-//  def randomPersistenceMessage: PersistenceMessage =
-//    PersistenceMessage(
-//      Persistence(
-//        randomPerson,
-//        randomPerson,
-//        randomAmount,
-//        BusinessTime.now
-//      )
-//    )
-
-//  def randomPersistenceMessage(transactionMessage: TransactionMessage): PersistenceMessage =
-//    PersistenceMessage(
-//      Persistence(
-//        randomPerson,
-//        randomPerson,
-//        transactionMessage.transaction.amount,
-//        transactionMessage.transaction.businessTime
-//      )
-//    )
-//
-//  def randomPersistenceMessage(
-//    sender: Person,
-//    receiver: Person,
-//    transactionMessage: TransactionMessage
-//  ): PersistenceMessage =
-//    PersistenceMessage(
-//      Persistence(
-//        sender,
-//        receiver,
-//        transactionMessage.transaction.amount,
-//        transactionMessage.transaction.businessTime
-//      )
-//    )
 
 }

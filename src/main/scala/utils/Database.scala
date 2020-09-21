@@ -14,14 +14,23 @@ import utils.Database.TransactionData
 class Database(xa: Aux[IO, Unit]) {
 
   def insert(transactionData: TransactionData): IO[Int] =
-    (fr"INSERT INTO simple_ledger.tb_data(sender, receiver, amount, currency, business_time)" ++
+    (fr"INSERT INTO simple_ledger.tb_data(id, sender, receiver, amount, currency, business_time)" ++
       fr"  VALUES(" ++
-      fr"  ${transactionData.sender.value}" ++
+      fr"  ${transactionData.transactionId.value}" ++
+      fr", ${transactionData.sender.value}" ++
       fr", ${transactionData.receiver.value}" ++
       fr", ${transactionData.amount.value}" ++
       fr", ${transactionData.amount.currency.symbol}" ++
       fr", ${transactionData.businessTime.value}" ++
       fr")").update.run.transact(xa)
+
+  def getNextId: OptionT[IO, Long] =
+    OptionT(
+      sql"SELECT sq_data.nextval FROM dual"
+        .query[Long]
+        .option
+        .transact(xa)
+    )
 
   def getPersonFullName(personId: Id): OptionT[IO, String] =
     OptionT(
@@ -36,6 +45,7 @@ class Database(xa: Aux[IO, Unit]) {
 object Database {
 
   case class TransactionData(
+    transactionId: Id,
     sender: FullName,
     receiver: FullName,
     amount: Amount,

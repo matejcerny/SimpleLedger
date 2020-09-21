@@ -5,7 +5,7 @@ import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import common.Configuration.buildConfig
-import utils.Generator
+import utils.Generator.randomTransactionMessage
 
 object SimpleLedger extends IOApp with LazyLogging {
 
@@ -23,11 +23,12 @@ object SimpleLedger extends IOApp with LazyLogging {
       for {
         _ <- IO(logger.info("Starting the application"))
         config <- IO(buildConfig(path))
+        system = ActorSystem(TransactionActor(), "Transactions", config)
       } yield {
-        val system = ActorSystem(TransactionActor(), "Transactions", config)
-
-        system ! Generator.randomTransactionMessage
-        //system ! Generator.randomTransactionMessage
+        system ! randomTransactionMessage
+        system ! randomTransactionMessage
+        system ! randomTransactionMessage
+        system ! randomTransactionMessage
 
         Thread.sleep(10000)
         system ! GracefulShutdown

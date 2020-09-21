@@ -11,11 +11,6 @@ object GeneratorTest extends Properties("common.GeneratorTest") {
     randomAmount.value >= Amount.min.value && randomAmount.value <= Amount.max.value
   }
 
-  property("randomPerson") = {
-    val p = randomPerson.asString.split(" ")
-    p.size == 2 && names.contains(p.head) && surnames.contains(p(1))
-  }
-
   property("randomCurrency") = Currency.toList.contains(randomCurrency)
 
 }

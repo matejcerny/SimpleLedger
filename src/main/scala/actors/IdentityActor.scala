@@ -22,10 +22,9 @@ object IdentityActor {
           receiver <- db.getPersonFullName(msg.receiverId)
           sender <- db.getPersonFullName(msg.senderId)
         } yield IdentityResponse(FullName(receiver), FullName(sender))
-      ).value.unsafeRunSync() match {
-        case Some(identityResponse) => msg.replyTo ! identityResponse
-        case None => msg.replyTo ! FailedResponse("Person not found")
-      }
+      ).getOrElse(FailedResponse("Person not found"))
+        .map(msg.replyTo.tell)
+        .unsafeRunSync()
 
       Behaviors.same
     }
