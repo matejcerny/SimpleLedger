@@ -40,14 +40,14 @@ object LedgerActor {
   def apply(): Behavior[Command] =
     Behaviors.setup[Command] { context =>
       Behaviors.receiveMessage {
-        case transactionMessage: TransactionMessage =>
+        case msg: TransactionMessage =>
           context.log.info(s"TransactionMessage received")
-          askForIdentities(context, transactionMessage)
+          askForIdentities(context, msg)
           Behaviors.same
 
-        case transactionWithIdentities: TransactionWithIdentities =>
+        case msg: TransactionWithIdentities =>
           context.log.info(s"TransactionWithIdentities received")
-          askForPersistenceId(context, transactionWithIdentities)
+          askForPersistenceId(context, msg)
           Behaviors.same
 
         case TransactionForPersistence(id, sender, receiver, amount, businessTime) =>

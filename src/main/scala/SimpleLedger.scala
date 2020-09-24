@@ -1,11 +1,10 @@
 import actors.TransactionActor
-import actors.TransactionActor.GracefulShutdown
+import actors.TransactionActor.{GracefulShutdown, Transaction}
 import akka.actor.typed.ActorSystem
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import common.Configuration.buildConfig
-import utils.Generator.randomTransactionMessage
 
 object SimpleLedger extends IOApp with LazyLogging {
 
@@ -25,10 +24,10 @@ object SimpleLedger extends IOApp with LazyLogging {
         config <- IO(buildConfig(path))
         system = ActorSystem(TransactionActor(), "Transactions", config)
       } yield {
-        system ! randomTransactionMessage
-        system ! randomTransactionMessage
-        system ! randomTransactionMessage
-        system ! randomTransactionMessage
+        system ! Transaction
+        system ! Transaction
+        system ! Transaction
+        system ! Transaction
 
         Thread.sleep(10000)
         system ! GracefulShutdown

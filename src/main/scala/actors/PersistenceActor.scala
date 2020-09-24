@@ -54,6 +54,6 @@ object PersistenceActor {
   private def getPersistenceId(context: ActorContext[Command]): IO[Response] =
     Configuration(context.system).database.getNextId
       .map((id: Long) => PersistenceIdResponse(Id(id)))
-      .getOrElse(FailedPersistenceResponse("Cannot create TransactionId"))
+      .getOrElse(FailedPersistenceResponse("Cannot create PersistenceId"))
 
 }

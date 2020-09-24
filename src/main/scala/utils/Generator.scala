@@ -1,6 +1,5 @@
 package utils
 
-import actors.TransactionActor.Transaction
 import common.Domain._
 
 import scala.math.BigDecimal.RoundingMode
@@ -17,13 +16,6 @@ object Generator {
       (BigDecimal(nextInt(100000)) + BigDecimal(nextDouble())
         .setScale(8, RoundingMode.HALF_UP)).abs,
       randomCurrency
-    )
-
-  def randomTransactionMessage: Transaction =
-    Transaction(
-      randomId,
-      randomId,
-      randomAmount
     )
 
 }
