@@ -1,7 +1,7 @@
 package actors
 
-import actors.IdentityActor.{FailedResponse, IdentityRequest, IdentityResponse}
-import actors.PersistenceActor.PersistenceMessage
+import actors.IdentityActor.{FailedIdentityResponse, IdentityRequest, IdentityResponse}
+import actors.PersistenceActor.{FailedPersistenceResponse, PersistenceIdRequest, PersistenceIdResponse, PersistenceMessage}
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.util.Timeout
@@ -14,7 +14,6 @@ object LedgerActor {
 
   sealed trait Command
   case class TransactionMessage(
-    transactionId: Id,
     senderId: Id,
     receiverId: Id,
     amount: Amount,
@@ -22,57 +21,85 @@ object LedgerActor {
   ) extends Command
 
   case class TransactionWithIdentities(
-    transactionId: Id,
     sender: Person,
     receiver: Person,
     amount: Amount,
     businessTime: BusinessTime
   ) extends Command
 
-  case class FailedMessage(reason: String) extends Command
+  case class TransactionForPersistence(
+    id: Id,
+    sender: Person,
+    receiver: Person,
+    amount: Amount,
+    businessTime: BusinessTime
+  ) extends Command
+
+  case class FailedLedgerMessage(reason: String) extends Command
 
   def apply(): Behavior[Command] =
     Behaviors.setup[Command] { context =>
       Behaviors.receiveMessage {
         case transactionMessage: TransactionMessage =>
-          processTransaction(context, transactionMessage)
+          context.log.info(s"TransactionMessage received")
+          askForIdentities(context, transactionMessage)
           Behaviors.same
 
-        case TransactionWithIdentities(id, sender, receiver, amount, businessTime) =>
-          context.log.info(s"IdentityMessage ${id.value} received")
+        case transactionWithIdentities: TransactionWithIdentities =>
+          context.log.info(s"TransactionWithIdentities received")
+          askForPersistenceId(context, transactionWithIdentities)
+          Behaviors.same
+
+        case TransactionForPersistence(id, sender, receiver, amount, businessTime) =>
+          context.log.info(s"TransactionForPersistence received")
           context
             .spawn(PersistenceActor(), "LedgerToPersistence")
             .tell(PersistenceMessage(id, sender, receiver, amount, businessTime))
           Behaviors.same
 
-        case FailedMessage(reason) =>
+        case FailedLedgerMessage(reason) =>
           context.log.error(reason)
           Behaviors.same
       }
     }
 
-  private def processTransaction(
+  private def askForIdentities(
     context: ActorContext[Command],
     transactionMessage: TransactionMessage
   ): Unit = {
     import transactionMessage._
     implicit val timeout: Timeout = Configuration(context.system).timeout
 
-    context.log.info(s"TransactionMessage ${transactionId.value} received")
-
     val identityActor = context.spawn(IdentityActor(), "LedgerToIdentity")
 
     context.ask(identityActor, a => IdentityRequest(senderId, receiverId, a)) {
       case Success(IdentityResponse(sender, receiver)) =>
         TransactionWithIdentities(
-          transactionId,
           Person(senderId, sender),
           Person(receiverId, receiver),
           amount,
           businessTime
         )
-      case Success(FailedResponse(reason)) => FailedMessage(reason)
-      case Failure(e) => FailedMessage(e.getMessage)
+      case Success(FailedIdentityResponse(reason)) => FailedLedgerMessage(reason)
+      case Failure(e) => FailedLedgerMessage(e.getMessage)
+    }
+  }
+
+  private def askForPersistenceId(
+    context: ActorContext[Command],
+    transactionWithIdentities: TransactionWithIdentities
+  ): Unit = {
+    import transactionWithIdentities._
+    implicit val timeout: Timeout = Configuration(context.system).timeout
+
+    val persistenceActor = context.spawn(PersistenceActor(), "LedgerToPersistenceId")
+
+    context.ask(persistenceActor, PersistenceIdRequest) {
+      case Success(PersistenceIdResponse(id)) =>
+        TransactionForPersistence(id, sender, receiver, amount, businessTime)
+
+      case Success(FailedPersistenceResponse(reason)) => FailedLedgerMessage(reason)
+      case Failure(e) => FailedLedgerMessage(e.getMessage)
     }
   }
 

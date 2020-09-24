@@ -10,7 +10,7 @@ object IdentityActor {
   sealed trait Response
   case class IdentityRequest(senderId: Id, receiverId: Id, replyTo: ActorRef[Response])
   case class IdentityResponse(sender: FullName, receiver: FullName) extends Response
-  case class FailedResponse(reason: String) extends Response
+  case class FailedIdentityResponse(reason: String) extends Response
 
   def apply(): Behavior[IdentityRequest] =
     Behaviors.receive { (context, msg) =>
@@ -22,7 +22,7 @@ object IdentityActor {
           receiver <- db.getPersonFullName(msg.receiverId)
           sender <- db.getPersonFullName(msg.senderId)
         } yield IdentityResponse(FullName(receiver), FullName(sender))
-      ).getOrElse(FailedResponse("Person not found"))
+      ).getOrElse(FailedIdentityResponse("Person not found"))
         .map(msg.replyTo.tell)
         .unsafeRunSync()
 
