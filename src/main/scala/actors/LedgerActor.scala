@@ -1,7 +1,7 @@
 package actors
 
-import actors.IdentityActor.{FailedIdentityResponse, IdentityRequest, IdentityResponse}
-import actors.PersistenceActor.{FailedPersistenceResponse, PersistenceIdRequest, PersistenceIdResponse, PersistenceMessage}
+import actors.IdentityActor.{PersonNotFound, IdentityRequest, IdentityResponse}
+import actors.PersistenceActor.{PersistenceIdFailed, PersistenceIdRequest, PersistenceIdResponse, PersistenceMessage}
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.util.Timeout
@@ -80,7 +80,7 @@ object LedgerActor {
           amount,
           businessTime
         )
-      case Success(FailedIdentityResponse(reason)) => FailedLedgerMessage(reason)
+      case Success(PersonNotFound) => FailedLedgerMessage("Person not found")
       case Failure(e) => FailedLedgerMessage(e.getMessage)
     }
   }
@@ -98,7 +98,7 @@ object LedgerActor {
       case Success(PersistenceIdResponse(id)) =>
         TransactionForPersistence(id, sender, receiver, amount, businessTime)
 
-      case Success(FailedPersistenceResponse(reason)) => FailedLedgerMessage(reason)
+      case Success(PersistenceIdFailed) => FailedLedgerMessage("Cannot create PersistenceId")
       case Failure(e) => FailedLedgerMessage(e.getMessage)
     }
   }

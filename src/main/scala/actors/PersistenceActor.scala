@@ -21,7 +21,7 @@ object PersistenceActor {
 
   sealed trait Response
   case class PersistenceIdResponse(id: Id) extends Response
-  case class FailedPersistenceResponse(reason: String) extends Response
+  case object PersistenceIdFailed extends Response
 
   def apply(): Behavior[Command] =
     Behaviors.receive {
@@ -31,7 +31,7 @@ object PersistenceActor {
         Behaviors.same
 
       case (context, PersistenceIdRequest(replyTo)) =>
-        context.log.info(s"TransactionIdRequest received")
+        context.log.info(s"PersistenceIdRequest received")
         replyTo ! getPersistenceId(context).unsafeRunSync()
         Behaviors.same
     }
@@ -54,6 +54,6 @@ object PersistenceActor {
   private def getPersistenceId(context: ActorContext[Command]): IO[Response] =
     Configuration(context.system).database.getNextId
       .map((id: Long) => PersistenceIdResponse(Id(id)))
-      .getOrElse(FailedPersistenceResponse("Cannot create PersistenceId"))
+      .getOrElse(PersistenceIdFailed)
 
 }

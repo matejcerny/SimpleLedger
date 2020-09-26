@@ -1,6 +1,17 @@
 # Simple Ledger
 Demo app made with Akka Typed Actors, Cats, Doobie and Oracle database.
 
+TODO:
+- [X] Configuration
+- [X] Basic functionality of actors
+- [X] Database with sample data
+- [X] Request-response
+- [X] Error messages
+- [ ] Unit tests
+- [ ] Scheduled transformations
+
+![Sequence diagram](project/diagram.png)
+
 ## Usage
 Download and run docker image with Oracle 12c.
 ```
