@@ -1,15 +1,6 @@
 # Simple Ledger
 Demo app made with Akka Typed Actors, Cats, Doobie and Oracle database.
 
-TODO:
-- [X] Configuration
-- [X] Basic functionality of actors
-- [X] Database with sample data
-- [X] Request-response
-- [X] Error messages
-- [ ] Unit tests
-- [ ] Scheduled transformations
-
 ![Sequence diagram](project/diagram.png)
 
 ## Usage
@@ -40,3 +31,7 @@ Run application with parameter
 ```
 java -jar ./target/scala-2.13/SimpleLedger.jar /application.conf
 ```
+
+## TODO
+- Unit tests with github actions
+- Scheduled transformations
