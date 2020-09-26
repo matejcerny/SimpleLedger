@@ -1,4 +1,6 @@
 # Simple Ledger
+![Build Status](https://github.com/matejcerny/SimpleLedger/workflows/test/badge.svg)
+
 Demo app made with Akka Typed Actors, Cats, Doobie and Oracle database.
 
 ![Sequence diagram](project/diagram.png)
