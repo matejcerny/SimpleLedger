@@ -7,7 +7,9 @@ import scala.util.Random.{between, nextDouble, nextInt}
 
 object Generator {
 
-  def randomId: Id = Id(between(0, 60))
+  val (minId, maxId) = (1, 60)
+
+  def randomId: Id = Id(between(minId, maxId))
 
   def randomCurrency: Currency = Currency.toList(nextInt(Currency.size))
 

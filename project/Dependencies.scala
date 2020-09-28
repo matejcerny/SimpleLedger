@@ -14,31 +14,48 @@ object Dependencies {
     val SLF4J = "1.7.9"
   }
 
-  val Akka = Seq("com.typesafe.akka" %% "akka-cluster-typed" % Versions.Akka)
+  object Modules {
+    val Akka = "com.typesafe.akka"
+    val Cats = "org.typelevel"
+    val Config = "com.github.andyglow"
+    val Doobie = "org.tpolecat"
+    val Logback = "ch.qos.logback"
+    val ScalaCheck = "org.scalacheck"
+    val ScalaLogging = "com.typesafe.scala-logging"
+    val ScalaTest = "org.scalatest"
+    val SLF4J = "org.slf4j"
+  }
 
-  val Cats = Seq(
-    "org.typelevel" %% "cats-core" % Versions.Cats,
-    "org.typelevel" %% "cats-effect" % Versions.Cats
+  val Akka = Seq(
+    Modules.Akka %% "akka-cluster-typed" % Versions.Akka
   )
 
-  val Config = Seq("com.github.andyglow" %% "typesafe-config-scala" % Versions.Config)
+  val Cats = Seq(
+    Modules.Cats %% "cats-core" % Versions.Cats,
+    Modules.Cats %% "cats-effect" % Versions.Cats
+  )
+
+  val Config = Seq(
+    Modules.Config %% "typesafe-config-scala" % Versions.Config
+  )
 
   val Doobie = Seq(
-    "org.tpolecat" %% "doobie-core" % Versions.Doobie,
-    "org.tpolecat" %% "doobie-postgres" % Versions.Doobie,
-    "org.tpolecat" %% "doobie-specs2" % Versions.Doobie % Test,
-    "org.tpolecat" %% "doobie-scalatest" % Versions.Doobie % Test
+    Modules.Doobie %% "doobie-core" % Versions.Doobie,
+    Modules.Doobie %% "doobie-postgres" % Versions.Doobie,
+    Modules.Doobie %% "doobie-specs2" % Versions.Doobie % Test,
+    Modules.Doobie %% "doobie-scalatest" % Versions.Doobie % Test
   )
 
   val Logging = Seq(
-    "ch.qos.logback" % "logback-classic" % Versions.Logback,
-    "com.typesafe.scala-logging" %% "scala-logging" % Versions.ScalaLogging,
-    "org.slf4j" % "slf4j-api" % Versions.SLF4J
+    Modules.Logback % "logback-classic" % Versions.Logback,
+    Modules.ScalaLogging %% "scala-logging" % Versions.ScalaLogging,
+    Modules.SLF4J % "slf4j-api" % Versions.SLF4J
   )
 
-  val ScalaTest = Seq(
-    "org.scalatest" %% "scalatest" % Versions.ScalaTest % Test,
-    "org.scalacheck" %% "scalacheck" % Versions.ScalaCheck % Test
+  val Testing = Seq(
+    Modules.ScalaTest %% "scalatest" % Versions.ScalaTest % Test,
+    Modules.ScalaCheck %% "scalacheck" % Versions.ScalaCheck % Test,
+    Modules.Akka %% "akka-actor-testkit-typed" % Versions.Akka % Test
   )
 
 }

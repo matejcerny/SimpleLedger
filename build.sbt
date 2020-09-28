@@ -8,7 +8,7 @@ Global / assemblyJarName := s"${name.value}.jar"
 lazy val SimpleLedger = project
   .in(file("."))
   .settings(
-    libraryDependencies ++= Akka ++ Cats ++ Config ++ Doobie ++ Logging ++ ScalaTest
+    libraryDependencies ++= Akka ++ Cats ++ Config ++ Doobie ++ Logging ++ Testing
   )
 
 
